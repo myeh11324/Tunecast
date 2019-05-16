@@ -1,5 +1,5 @@
 import React from 'react';
-import getWeather from './utilityfuncs/getWeather.js'
+import {APP_ID, APP_URL} from './config/environment.js'
 import './App.css';
 
 class App extends React.Component {
@@ -13,19 +13,27 @@ class App extends React.Component {
   }
   
   componentDidMount() {
-    getWeather()
-    .then(res => res.json()) 
-    .then(data => this.setState({name:data.name}))
   }
 
-  // getWeatherInfo = async () => {
-  //   let info = await getWeather()
-    
-  //   console.log(info)
-  // }
+  getWeatherInfo = async () => {
+    navigator.geolocation.getCurrentPosition(async function(position) {
+      let lat = position.coords.latitude
+      let lon = position.coords.longitude
+
+      try {
+        const res = await fetch(`${APP_URL}?lat=${lat}&lon=${lon}&units=metric&APPID=${APP_ID}`);
+        const weatherData = await res.json();
+        console.log(weatherData.name, weatherData.main.temp, weatherData.weather[0].description)
+        //conversion (7.1°C × 9/5) + 32 = 44.78°F
+        return weatherData;
+      } catch (err) {
+        console.error(err)
+      }
+    })
+  }
 
   render() {
-    // this.getWeatherInfo()
+    this.getWeatherInfo()
     return (
       <div className="App">
         <header className="App-header">
@@ -35,7 +43,6 @@ class App extends React.Component {
       </div>
     );
   }
-
 }
 
 export default App;
