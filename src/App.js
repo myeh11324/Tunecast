@@ -1,5 +1,8 @@
 import React from 'react';
 import {APP_ID, APP_URL} from './config/environment.js'
+// import axios from 'axios'
+// import {playlistSongs} from './server/GetData.js'
+// import {playlistSongs} from './Spotify'
 import './App.css';
 
 class App extends React.Component {
@@ -15,6 +18,7 @@ class App extends React.Component {
   
   componentDidMount() {
     this.getWeatherInfo()
+    // this.playlistSongs()
   }
 
   getWeatherInfo () {
@@ -25,7 +29,7 @@ class App extends React.Component {
       try {
         const res = await fetch(`${APP_URL}?lat=${lat}&lon=${lon}&units=metric&APPID=${APP_ID}`);
         const weatherData = await res.json();
-        let fahrenheight = (weatherData.main.temp)*(9/5) + 32
+        let fahrenheight = Math.round((weatherData.main.temp)*(9/5) + 32)
         this.setState({name: weatherData.name,
                       temp: fahrenheight,
                       description: weatherData.weather[0].description})
@@ -37,6 +41,8 @@ class App extends React.Component {
   }
 
   render() {
+    // test()
+    // playlistSongs()
     return (
       <div className="App">
         <h1>{this.state.name}</h1>
