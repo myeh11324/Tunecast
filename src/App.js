@@ -21,6 +21,11 @@ class App extends React.Component {
     // this.playlistSongs()
   }
 
+  handleClick() {
+    //on click (the view songs button), i want to grab the songs from my backend routes
+    //which will depend on the weather conditions. for now, either happy or sad 
+  }
+
   getWeatherInfo () {
     navigator.geolocation.getCurrentPosition(async(position) => {
       let lat = position.coords.latitude
