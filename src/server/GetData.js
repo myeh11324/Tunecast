@@ -2,10 +2,18 @@
 const axios = require('axios')
 const express = require('express')
 const app = express()
+module.exports = app
+
 const SpotifyWebApi = require('spotify-web-api-node');
 const getToken  = require('./SpotifyAuth.js');
 const SPOTIFY_CLIENT_ID = require('./Spotify')
 const SPOTIFY_CLIENT_SECRET = require('./Spotify')
+
+const port = 5000
+
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+
 
 const spotifyApi = new SpotifyWebApi({
     clientId: SPOTIFY_CLIENT_ID,
@@ -15,7 +23,7 @@ const spotifyApi = new SpotifyWebApi({
   const tokenPromise = getToken()
   
   //sad playlist
-  app.get('/songs/sad', async (req, res, next) => {
+  app.get('/api/songs/sad', async (req, res) => {
       const token = (await tokenPromise).data.access_token
       try {
         const result = await axios({
@@ -24,7 +32,7 @@ const spotifyApi = new SpotifyWebApi({
             headers: { Authorization: `Bearer ${token}`,
                        'Content-Type': 'application/json' },
           });
-          res.json(result.data.tracks.items) //array of objects
+          res.send(result.data.tracks.items) //array of objects
         //   console.log(result)
       } catch (error) {
           console.error(error)
@@ -32,7 +40,7 @@ const spotifyApi = new SpotifyWebApi({
   })
 
   //happy playlist
-  app.get('/songs/happy', async (req, res, next) => {
+  app.get('/api/songs/happy', async (req, res) => {
     const token = (await tokenPromise).data.access_token;
     try {
         const result = await axios({
@@ -47,9 +55,13 @@ const spotifyApi = new SpotifyWebApi({
     }
   })
 
+  app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../../public/index.html'))
+  });
+ 
+  app.listen(port, () => console.log(`Listening on port ${port}`));
 
-
-//Keep for testing purposes/seeing data result:
+// Keep for testing purposes/seeing data result:
 //   async function playlistSongs() {
 //     const token = (await tokenPromise).data.access_token;
 //     try {
@@ -65,5 +77,7 @@ const spotifyApi = new SpotifyWebApi({
 //       console.error(err);
 //     }
 //   }
+
+//   module.exports = playlistSongs
 
 //   playlistSongs()

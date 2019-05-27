@@ -1,7 +1,7 @@
 import React from 'react';
 import {APP_ID, APP_URL} from './config/environment.js'
-// import axios from 'axios'
-// import {playlistSongs} from './server/GetData.js'
+import axios from 'axios'
+// import playlistSongs from './server/GetData.js'
 // import {playlistSongs} from './Spotify'
 import './App.css';
 
@@ -11,14 +11,18 @@ class App extends React.Component {
     this.state = {
       name: '',
       temp: null,
-      description: ''
+      description: '',
+      songs: []
     }
     this.getWeatherInfo = this.getWeatherInfo.bind(this)
   }
   
-  componentDidMount() {
+  async componentDidMount() {
     this.getWeatherInfo()
-    // this.playlistSongs()
+    const result = await axios.get('/api/songs/sad')
+    const tracks = result.data.slice(0,10)
+    this.setState({songs: tracks})
+    console.log(this.state)
   }
 
   handleClick() {
