@@ -19,10 +19,17 @@ class App extends React.Component {
   
   async componentDidMount() {
     this.getWeatherInfo()
-    const result = await axios.get('/api/songs/sad')
-    const tracks = result.data.slice(0,10)
-    this.setState({songs: tracks})
-    console.log(this.state)
+    if (this.state.temp <= 50) {
+      const sadResult = await axios.get('/api/songs/sad')
+      const sadTracks = sadResult.data.slice(0,10)
+      this.setState({songs: sadTracks})
+    } else {
+      const happyResult = await axios.get('/api/songs/happy')
+      const happyTracks = happyResult.data.slice(0,10)
+      this.setState({songs: happyTracks})
+    }
+    // console.log(tracks)
+    // console.log('TEST IMG URL', tracks[0].track.album.images[0].url) //this works
   }
 
   handleClick() {
@@ -50,15 +57,18 @@ class App extends React.Component {
   }
 
   render() {
-    // test()
-    // playlistSongs()
     return (
       <div className="App">
         <h1>{this.state.name}</h1>
         <h3>{this.state.temp}&deg;F</h3>
         <h3>{this.state.description}</h3>
-        <h3>View song recommendations: </h3>
-        <button>playlist</button>
+        {this.state.songs.map(song => {
+          return (
+          <img alt='' src={song.track.album.images[0].url}/>
+          )
+        }
+        )}
+        <button>Music!</button>
       </div>
     );
   }
