@@ -15,10 +15,19 @@ class App extends React.Component {
       songs: []
     }
     this.getWeatherInfo = this.getWeatherInfo.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
   
   async componentDidMount() {
-    this.getWeatherInfo()
+    let weatherInfo = this.getWeatherInfo()
+    console.log(weatherInfo)
+    // console.log(tracks)
+    // console.log('TEST IMG URL', tracks[0].track.album.images[0].url) //this works
+  }
+
+  async handleClick() {
+    //I think I should set state in here instead of componentDidMount
+    //Try this, if doesn't work then need to move it back up
     if (this.state.temp <= 50) {
       const sadResult = await axios.get('/api/songs/sad')
       const sadTracks = sadResult.data.slice(0,10)
@@ -28,13 +37,7 @@ class App extends React.Component {
       const happyTracks = happyResult.data.slice(0,10)
       this.setState({songs: happyTracks})
     }
-    // console.log(tracks)
-    // console.log('TEST IMG URL', tracks[0].track.album.images[0].url) //this works
-  }
-
-  handleClick() {
-    //on click (the view songs button), i want to grab the songs from my backend routes
-    //which will depend on the weather conditions. for now, either happy or sad 
+    console.log(this.state)
   }
 
   getWeatherInfo () {
@@ -68,7 +71,7 @@ class App extends React.Component {
           )
         }
         )}
-        <button>Music!</button>
+        <button onClick={this.handleClick}>Music!</button>
       </div>
     );
   }
