@@ -22,5 +22,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-./src/config
-./src/server/Spotify.js
+/src/config
+/src/server/Spotify.js
