@@ -67,11 +67,15 @@ class App extends React.Component {
         <h3>{this.state.description}</h3>
         {this.state.songs.map(song => {
           return (
-          <img alt='' src={song.track.album.images[0].url}/>
+          <div>
+            <img alt='' src={song.track.album.images[0].url}/>
+            <div>Track name: {song.track.name}</div>
+            <div>Artist: {song.track.artists[0].name}</div>
+          </div>
           )
         }
         )}
-        <button onClick={this.handleClick}>Music!</button>
+        <button onClick={this.handleClick}>See my weather tunecast!</button>
       </div>
     );
   }
