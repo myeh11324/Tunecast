@@ -1,8 +1,7 @@
 import React from 'react';
 import {APP_ID, APP_URL} from './config/environment.js'
 import axios from 'axios'
-// import playlistSongs from './server/GetData.js'
-// import {playlistSongs} from './Spotify'
+import { Button, Icon } from 'semantic-ui-react'
 import './App.css';
 
 class App extends React.Component {
@@ -75,7 +74,10 @@ class App extends React.Component {
           )
         }
         )}
-        <button onClick={this.handleClick}>See my weather tunecast!</button>
+        <Button animated='fade' onClick={this.handleClick}>
+          <Button.Content visible>See my weather tunecast!</Button.Content>
+          <Button.Content hidden><Icon name='music'/></Button.Content>
+        </Button>
       </div>
     );
   }
