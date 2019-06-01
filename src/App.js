@@ -1,7 +1,7 @@
 import React from 'react';
 import {APP_ID, APP_URL} from './config/environment.js'
 import axios from 'axios'
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Grid, Image, Header, Popup } from 'semantic-ui-react'
 import './App.css';
 
 class App extends React.Component {
@@ -33,7 +33,7 @@ class App extends React.Component {
       this.setState({songs: sadTracks})
     } else {
       const happyResult = await axios.get('/api/songs/happy')
-      const happyTracks = happyResult.data.slice(0,10)
+      const happyTracks = happyResult.data.slice(0,12)
       this.setState({songs: happyTracks})
     }
     console.log(this.state)
@@ -61,26 +61,43 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <h1>{this.state.name}</h1>
-        <h3>{this.state.temp}&deg;F</h3>
-        <h3>{this.state.description}</h3>
+        <Header as='h2' icon id='weather'>
+          <Icon name='cloudversify' />
+          {this.state.name}
+          <Header.Subheader>{this.state.temp}&deg;F</Header.Subheader>
+          <Header.Subheader>{this.state.description}</Header.Subheader>
+      </Header>
+        
+      <Grid relaxed columns={4}>
         {this.state.songs.map(song => {
-          return (
-          <div>
-            <img alt='' src={song.track.album.images[0].url}/>
-            <div>Track name: {song.track.name}</div>
-            <div>Artist: {song.track.artists[0].name}</div>
-          </div>
-          )
-        }
-        )}
+            return (
+              <Grid.Column>
+                <Popup trigger={<Image alt='' src={song.track.album.images[0].url}/>} 
+                  content={`Track name: ${song.track.name}         
+                            Artist: ${song.track.artists[0].name}`}
+                  style={style}
+                />
+              </Grid.Column>
+            )
+          }
+          )}
+      </Grid>
+        
         <Button animated='fade' onClick={this.handleClick}>
           <Button.Content visible>See my weather tunecast!</Button.Content>
           <Button.Content hidden><Icon name='music'/></Button.Content>
         </Button>
-      </div>
+    </div>
     );
   }
 }
+
+const style = {
+  font: 'Varela Round',
+  borderRadius: 2,
+  opacity: 0.75,
+  padding: '2em',
+}
+
 
 export default App;
