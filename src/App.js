@@ -74,7 +74,7 @@ class App extends React.Component {
               <Grid.Column>
                 <Popup trigger={<Image alt='' src={song.track.album.images[0].url}/>} 
                   content={`Track name: ${song.track.name}         
-                            Artist: ${song.track.artists[0].name}`}
+                                Artist: ${song.track.artists[0].name}`}
                   style={style}
                 />
               </Grid.Column>
@@ -94,7 +94,9 @@ class App extends React.Component {
 
 const style = {
   font: 'Varela Round',
-  borderRadius: 2,
+  borderRadius: 4,
+  backgroundColor: 'lavender',
+  fontWeight: 'bolder',
   opacity: 0.75,
   padding: '2em',
 }
