@@ -22,8 +22,24 @@ const spotifyApi = new SpotifyWebApi({
 
   const tokenPromise = getToken()
   
-  //sad playlist
-  app.get('/api/songs/sad', async (req, res) => {
+  //cold & snow (weatherId 6)
+  app.get('/api/songs/snow', async (req, res) => {
+    const token = (await tokenPromise).data.access_token
+    try {
+      const result = await axios({
+          method: 'get',
+          url: `https://api.spotify.com/v1/playlists/37i9dQZF1DX4H7FFUM2osB`,
+          headers: { Authorization: `Bearer ${token}`,
+                     'Content-Type': 'application/json' },
+        });
+        res.send(result.data.tracks.items) //array of objects
+    } catch (error) {
+        console.error(error)
+    }
+  })
+
+  //rain or clouds (weatherId 2, 3, 5, 8)
+  app.get('/api/songs/rain', async (req, res) => {
       const token = (await tokenPromise).data.access_token
       try {
         const result = await axios({
@@ -39,13 +55,63 @@ const spotifyApi = new SpotifyWebApi({
       }
   })
 
-  //happy playlist
-  app.get('/api/songs/happy', async (req, res) => {
+
+  //Atmospheric instrumentals (weatherId 7)
+  app.get('/api/songs/atmosphere', async (req, res) => {
+    const token = (await tokenPromise).data.access_token
+    try {
+      const result = await axios({
+          method: 'get',
+          url: `https://api.spotify.com/v1/playlists/37i9dQZF1DWZd79rJ6a7lp`,
+          headers: { Authorization: `Bearer ${token}`,
+                     'Content-Type': 'application/json' },
+        });
+        res.send(result.data.tracks.items) //array of objects
+      //   console.log(result)
+    } catch (error) {
+        console.error(error)
+    }
+  })
+  
+  //clear and warm (50 <= temp <= 75, weatherId 800)
+  app.get('/api/songs/clear/warm', async (req, res) => {
     const token = (await tokenPromise).data.access_token;
     try {
         const result = await axios({
         method: 'get',
         url: `https://api.spotify.com/v1/playlists/37i9dQZF1DWWBHeXOYZf74`,
+        headers: { Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json' },
+        });
+        res.json(result.data.tracks.items) //array of objects
+    } catch (error) {
+        console.error(error);
+    }
+  })
+
+  //clear and hot (temp > 75, weatherId 800)
+  app.get('/api/songs/clear/hot', async (req, res) => {
+    const token = (await tokenPromise).data.access_token;
+    try {
+        const result = await axios({
+        method: 'get',
+        url: `https://api.spotify.com/v1/playlists/0mmqC3RIi8h7nApdD9gV7x`,
+        headers: { Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json' },
+        });
+        res.json(result.data.tracks.items) //array of objects
+    } catch (error) {
+        console.error(error);
+    }
+  })
+
+  //let's default to bossa nova
+  app.get('/api/songs/default', async (req, res) => {
+    const token = (await tokenPromise).data.access_token;
+    try {
+        const result = await axios({
+        method: 'get',
+        url: `https://api.spotify.com/v1/playlists/37i9dQZF1DX4AyFl3yqHeK`,
         headers: { Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json' },
         });

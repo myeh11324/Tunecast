@@ -13,8 +13,9 @@ class App extends React.Component {
       name: '',
       temp: null,
       description: '',
+      weatherId: 0,
       songs: [],
-      weatherLoading: true
+      weatherLoading: true,
     }
     this.getWeatherInfo = this.getWeatherInfo.bind(this)
     this.handleClick = this.handleClick.bind(this)
@@ -22,22 +23,35 @@ class App extends React.Component {
   
   async componentDidMount() {
     this.getWeatherInfo()
-    // console.log(weatherInfo)
-    // console.log(tracks)
-    // console.log('TEST IMG URL', tracks[0].track.album.images[0].url) //this works
   }
 
   async handleClick() {
-    if (this.state.temp <= 50) {
-      const sadResult = await axios.get('/api/songs/sad')
-      const sadTracks = sadResult.data.slice(0,10)
-      this.setState({songs: sadTracks})
+    if (50 <= this.state.temp <= 75 && this.state.weatherId === 800) {
+      const result = await axios.get('/api/songs/clear/warm')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
+    } else if (this.state.temp > 75 && this.state.weatherId === 800) {
+      const result = await axios.get('/api/songs/clear/hot')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
+    } else if (this.state.weatherId === 2 || this.state.weatherId === 3
+              || this.state.weatherId === 5 || this.state.weatherId ===8) {
+      const result = await axios.get('/api/songs/rain')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
+    } else if (this.state.weatherId === 7) {
+      const result = await axios.get('/api/songs/atmosphere')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
+    } else if (this.state.weatherId === 6) {
+      const result = await axios.get('/api/songs/snow')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
     } else {
-      const happyResult = await axios.get('/api/songs/happy')
-      const happyTracks = happyResult.data.slice(0,12)
-      this.setState({songs: happyTracks})
+      const result = await axios.get('/api/songs/default')
+      const tracks = result.data.slice(0,12)
+      this.setState({songs: tracks})
     }
-    console.log(this.state)
   }
 
   getWeatherInfo () {
@@ -49,10 +63,24 @@ class App extends React.Component {
         const res = await fetch(`${APP_URL}?lat=${lat}&lon=${lon}&units=metric&APPID=${APP_ID}`);
         const weatherData = await res.json();
         let fahrenheight = Math.round((weatherData.main.temp)*(9/5) + 32)
+        //weatherId is the first digit of available weather codes (besides clear sky case
+        //where id is 800): 
+        let weatherId =  weatherData.weather[0].id.toString()[0] 
+
+        if (weatherData.weather[0].id === 800) {
+          this.setState({weatherId: 800})
+        } else {
+          this.setState({weatherId: weatherId})
+        }
+
         this.setState({name: weatherData.name,
                       temp: fahrenheight,
                       description: weatherData.weather[0].description,
-                      weatherLoading: false})
+                      weatherLoading: false}, () => {
+                        console.log(this.state)
+                      })
+        // console.log(weatherData)
+        // console.log(weatherData.weather[0].id)
         return weatherData
       } catch (err) {
         console.error(err)
@@ -112,7 +140,7 @@ const style = {
   padding: '2em',
 }
 
-//descriptions: light rain,heavy intensity rain, clear sky, few clouds, scattered clouds
+
 //can check main property which will say thunderstorm, drizzle, rain, etc. 
 //https://openweathermap.org/weather-conditions
 
