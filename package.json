@@ -10,7 +10,9 @@
     "react-scripts": "3.0.1",
     "semantic-ui-react": "^0.87.1",
     "spotify-web-api-js": "^1.2.0",
-    "spotify-web-api-node": "^4.0.0"
+    "spotify-web-api-node": "^4.0.0",
+    "styled-components": "^4.2.1",
+    "styled-spinkit": "^0.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
