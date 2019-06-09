@@ -33,7 +33,6 @@ class App extends React.Component {
 
     if (this.state.temp >= 50 && this.state.temp <=75 && this.state.weatherId === 800) {
       const result = await axios.get('/api/songs/clear/warm')
-      // const tracks = result.data.slice(0,12)
       const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.temp > 75 && this.state.weatherId === 800) {
@@ -129,14 +128,13 @@ class App extends React.Component {
           <CubeGrid color='white' size={80}/> 
         ) : (
           <Grid relaxed columns={4}>
-            {this.state.songs.map(song => {
+            {this.state.songs.map((song,index) => {
                 return (
-                  <Grid.Column>
+                  <Grid.Column key={index}>
                     <Popup trigger={<Image alt='' src={song.track.album.images[0].url}/>} 
                       content={`Track name: ${song.track.name}         
                                 Artist: ${song.track.artists[0].name}`}
                       style={style}
-                      // key={this.state.songs[index]}
                     />
                   </Grid.Column>
                 )
