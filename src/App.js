@@ -15,9 +15,12 @@ class App extends React.Component {
       description: '',
       weatherId: 0,
       songs: [],
-      weatherLoading: true,
+      songsLoading: false,
+      weatherLoading: true, 
+      buttonClicks: 0 //this prop is for conditional rendering of button 
     }
     this.getWeatherInfo = this.getWeatherInfo.bind(this)
+    this.randomizeTracks = this.randomizeTracks.bind(this)
     this.handleClick = this.handleClick.bind(this)
   }
   
@@ -26,32 +29,52 @@ class App extends React.Component {
   }
 
   async handleClick() {
-    if (50 <= this.state.temp <= 75 && this.state.weatherId === 800) {
+    this.setState({songsLoading: true})
+
+    if (this.state.temp >= 50 && this.state.temp <=75 && this.state.weatherId === 800) {
       const result = await axios.get('/api/songs/clear/warm')
-      const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      // const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.temp > 75 && this.state.weatherId === 800) {
       const result = await axios.get('/api/songs/clear/hot')
       const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 2 || this.state.weatherId === 3
               || this.state.weatherId === 5 || this.state.weatherId ===8) {
       const result = await axios.get('/api/songs/rain')
       const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 7) {
       const result = await axios.get('/api/songs/atmosphere')
       const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 6) {
       const result = await axios.get('/api/songs/snow')
       const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else {
       const result = await axios.get('/api/songs/default')
       const tracks = result.data.slice(0,12)
-      this.setState({songs: tracks})
+      this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     }
+  }
+
+  randomizeTracks(arr) { 
+    let copy = arr.slice()
+    let randomTracks = []
+    for (let i = 0; i < 16; i++) {
+      //this ensures the randomTracks arr won't have duplicates
+      let indexOfTrack = Math.floor(Math.random()*copy.length)
+      let track = copy.splice(indexOfTrack,1)
+      randomTracks.push(track[0])
+    }
+    return randomTracks
+
+    //this will have duplicates
+    // for (let i = 0; i < 12; i++) {
+    //   randomTracks.push(arr[Math.floor(Math.random()*arr.length)])
+    // }
   }
 
   getWeatherInfo () {
@@ -102,8 +125,8 @@ class App extends React.Component {
           </Header>
         )}
 
-        {!this.state.songs ? (
-          <CubeGrid color='white' size={80}/> //doesn't actually show but leave just in case..
+        {this.state.songsLoading ? (
+          <CubeGrid color='white' size={80}/> 
         ) : (
           <Grid relaxed columns={4}>
             {this.state.songs.map(song => {
@@ -111,8 +134,9 @@ class App extends React.Component {
                   <Grid.Column>
                     <Popup trigger={<Image alt='' src={song.track.album.images[0].url}/>} 
                       content={`Track name: ${song.track.name}         
-                                    Artist: ${song.track.artists[0].name}`}
+                                Artist: ${song.track.artists[0].name}`}
                       style={style}
+                      // key={this.state.songs[index]}
                     />
                   </Grid.Column>
                 )
@@ -120,11 +144,17 @@ class App extends React.Component {
               )}
           </Grid>
         )}
-      
-        <Button style={{borderRadius: '10'}} animated='fade' onClick={this.handleClick}>
-          <Button.Content visible>See my weather tunecast!</Button.Content>
-          <Button.Content hidden><Icon name='music'/></Button.Content>
-        </Button>
+
+        {this.state.buttonClicks === 0 ? (
+          <Button style={{borderRadius: '10'}} animated='fade' onClick={this.handleClick}>
+            <Button.Content visible>See my weather tunecast!</Button.Content>
+            <Button.Content hidden><Icon name='music'/></Button.Content>
+          </Button>
+        ) : (
+          <Button style={{borderRadius: '10'}} onClick={this.handleClick}>
+            <Button.Content visible>Refresh my weather tunecast!</Button.Content>
+          </Button>
+        )}
     </div>
     );
   }
