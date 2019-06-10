@@ -30,31 +30,30 @@ class App extends React.Component {
 
   async handleClick() {
     this.setState({songsLoading: true})
-
     if (this.state.temp >= 50 && this.state.temp <=75 && this.state.weatherId === 800) {
       const result = await axios.get('/api/songs/clear/warm')
       const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.temp > 75 && this.state.weatherId === 800) {
       const result = await axios.get('/api/songs/clear/hot')
-      const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 2 || this.state.weatherId === 3
-              || this.state.weatherId === 5 || this.state.weatherId ===8) {
+      || this.state.weatherId === 5 || this.state.weatherId === 8) {
       const result = await axios.get('/api/songs/rain')
-      const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 7) {
       const result = await axios.get('/api/songs/atmosphere')
-      const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else if (this.state.weatherId === 6) {
       const result = await axios.get('/api/songs/snow')
-      const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     } else {
       const result = await axios.get('/api/songs/default')
-      const tracks = result.data.slice(0,12)
+      const tracks = this.randomizeTracks(result.data)
       this.setState({songs: tracks, songsLoading: false, buttonClicks: this.state.buttonClicks + 1})
     }
   }
@@ -62,18 +61,13 @@ class App extends React.Component {
   randomizeTracks(arr) { 
     let copy = arr.slice()
     let randomTracks = []
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 20; i++) {
       //this ensures the randomTracks arr won't have duplicates
       let indexOfTrack = Math.floor(Math.random()*copy.length)
       let track = copy.splice(indexOfTrack,1)
       randomTracks.push(track[0])
     }
     return randomTracks
-
-    //this will have duplicates
-    // for (let i = 0; i < 12; i++) {
-    //   randomTracks.push(arr[Math.floor(Math.random()*arr.length)])
-    // }
   }
 
   getWeatherInfo () {
@@ -87,7 +81,7 @@ class App extends React.Component {
         let fahrenheight = Math.round((weatherData.main.temp)*(9/5) + 32)
         //weatherId is the first digit of available weather codes (besides clear sky case
         //where id is 800): 
-        let weatherId =  weatherData.weather[0].id.toString()[0] 
+        let weatherId =  Number(weatherData.weather[0].id.toString()[0])
 
         if (weatherData.weather[0].id === 800) {
           this.setState({weatherId: 800})
